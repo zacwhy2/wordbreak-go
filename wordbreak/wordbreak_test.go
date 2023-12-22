@@ -14,6 +14,12 @@ func TestWordbreak(t *testing.T) {
 			[]string{"cats", "and", "dog"},
 		},
 		{
+			"pineapplepenapple",
+			[]string{"apple", "pen", "applepen", "pine", "pineapple"},
+			[]string{"pineapple", "pen", "apple"},
+		},
+
+		{
 			"catasanddog",
 			[]string{"cat", "cats", "and", "sand", "dog"},
 			[]string{"cat", "not possible", "sand", "dog"},
@@ -23,11 +29,10 @@ func TestWordbreak(t *testing.T) {
 			[]string{"cat", "cats", "and", "sand", "dog"},
 			[]string{"cats", "and", "not possible", "dog"},
 		},
-
 		{
-			"pineapplepenapple",
-			[]string{"apple", "pen", "applepen", "pine", "pineapple"},
-			[]string{"pineapple", "pen", "apple"},
+			"cats",
+			[]string{"cat", "cats", "and", "sand", "dog"},
+			[]string{"cats"},
 		},
 	}
 	for _, tt := range tests {
