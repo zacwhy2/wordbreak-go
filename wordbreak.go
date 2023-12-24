@@ -1,21 +1,18 @@
 package wordbreak
 
-import (
-	"sort"
-)
+import "sort"
 
-type Block struct {
-	start, end int
-	dictIndex  int
-}
+type block struct{ start, end, dictIndex int }
 
+// WordBreak splits a string s into an array of words
+// specfied by a dictionary of strings wordDict
 func WordBreak(s string, wordDict []string) []string {
+	// sort dictionary with longer words in front
 	sort.SliceStable(wordDict, func(i, j int) bool {
 		return len(wordDict[i]) > len(wordDict[j])
 	})
 
 	xs := wordBreakRecursive(s, wordDict, 0, len(s), 0)
-
 	words := []string{}
 	for _, x := range xs {
 		if x.dictIndex > -1 {
@@ -29,22 +26,21 @@ func WordBreak(s string, wordDict []string) []string {
 
 func wordBreakRecursive(
 	s string, wordDict []string,
-	start, end int,
-	dictIndex int,
-) []Block {
+	start, end, dictIndex int,
+) []block {
 	if dictIndex == len(wordDict) {
 		// when no more words in dictionary to try match
 		// then just return unmatched block
-		return []Block{{start, end, -1}}
+		return []block{{start, end, -1}}
 	}
 
 	dictWord := wordDict[dictIndex]
-	solvedBlocks := []Block{}
+	solvedBlocks := []block{}
 
 	for i := start; i < end-len(dictWord)+1; i++ {
 		substring := s[i : i+len(dictWord)]
 		if substring == dictWord {
-			b := Block{i, i + len(dictWord), dictIndex}
+			b := block{i, i + len(dictWord), dictIndex}
 			solvedBlocks = append(solvedBlocks, b)
 		}
 	}
@@ -54,13 +50,11 @@ func wordBreakRecursive(
 		return wordBreakRecursive(s, wordDict, start, end, dictIndex+1)
 	}
 
-	newBlocks := []Block{}
+	newBlocks := []block{}
 
 	if solvedBlocks[0].start > start {
 		xs := wordBreakRecursive(s, wordDict,
-			start, solvedBlocks[0].start,
-			dictIndex+1,
-		)
+			start, solvedBlocks[0].start, dictIndex+1)
 		newBlocks = append(newBlocks, xs...)
 	}
 
@@ -71,9 +65,7 @@ func wordBreakRecursive(
 		currentBlock := solvedBlocks[i]
 		if currentBlock.start > previousBlock.end {
 			xs := wordBreakRecursive(s, wordDict,
-				previousBlock.end, currentBlock.start,
-				dictIndex+1,
-			)
+				previousBlock.end, currentBlock.start, dictIndex+1)
 			newBlocks = append(newBlocks, xs...)
 		}
 		newBlocks = append(newBlocks, solvedBlocks[i])
@@ -82,9 +74,7 @@ func wordBreakRecursive(
 	lastSolvedBlock := solvedBlocks[len(solvedBlocks)-1]
 	if lastSolvedBlock.end < end {
 		xs := wordBreakRecursive(s, wordDict,
-			lastSolvedBlock.end, end,
-			dictIndex+1,
-		)
+			lastSolvedBlock.end, end, dictIndex+1)
 		newBlocks = append(newBlocks, xs...)
 	}
 
